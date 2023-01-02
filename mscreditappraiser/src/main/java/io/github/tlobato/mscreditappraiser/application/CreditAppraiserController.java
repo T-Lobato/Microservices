@@ -2,6 +2,9 @@ package io.github.tlobato.mscreditappraiser.application;
 
 import io.github.tlobato.mscreditappraiser.application.ex.ClientsDataNotFoundException;
 import io.github.tlobato.mscreditappraiser.application.ex.ErrorComunicationMicroservicesException;
+import io.github.tlobato.mscreditappraiser.application.ex.ErrorRequestCardException;
+import io.github.tlobato.mscreditappraiser.domain.model.CardIssuanceRequestData;
+import io.github.tlobato.mscreditappraiser.domain.model.CardRequestProtocol;
 import io.github.tlobato.mscreditappraiser.domain.model.ClientEvaluationReturn;
 import io.github.tlobato.mscreditappraiser.domain.model.ClientStatus;
 import io.github.tlobato.mscreditappraiser.domain.model.EvaluationData;
@@ -52,4 +55,14 @@ public class CreditAppraiserController {
         }
     }
 
+    @PostMapping("issuance-cards")
+    public ResponseEntity cardRequest(@RequestBody CardIssuanceRequestData data){
+        try{
+            CardRequestProtocol cardRequestProtocol = creditAppraiserService
+                    .requestCardIssuance(data);
+            return ResponseEntity.ok(cardRequestProtocol);
+        } catch (ErrorRequestCardException e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 }
